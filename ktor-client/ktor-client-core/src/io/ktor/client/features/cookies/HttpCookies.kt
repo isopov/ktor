@@ -10,7 +10,13 @@ import io.ktor.http.*
 import io.ktor.pipeline.*
 import io.ktor.util.*
 
-
+/**
+ * [HttpClient] feature that handles sent `Cookie`, and received `Set-Cookie` headers,
+ * using a specific [storage] for storing and retrieving cookies.
+ *
+ * You can configure the [Config.storage] and to provide [Config.default] blocks to set
+ * cookies when installing.
+ */
 class HttpCookies(private val storage: CookiesStorage) {
 
     operator fun get(host: String): Map<String, Cookie>? = storage[host]
@@ -22,8 +28,16 @@ class HttpCookies(private val storage: CookiesStorage) {
     class Config {
         private val defaults = mutableListOf<CookiesStorage.() -> Unit>()
 
+        /**
+         * [CookiesStorage] that will be used at this feature.
+         * By default it just uses an initially empty in-memory [AcceptAllCookiesStorage].
+         */
         var storage: CookiesStorage = AcceptAllCookiesStorage()
 
+        /**
+         * Registers a [block] that will be called when the configuration is complete the specified [storage].
+         * The [block] can potentially add new cookies by calling [CookiesStorage.addCookie].
+         */
         fun default(block: CookiesStorage.() -> Unit) {
             defaults.add(block)
         }
@@ -61,4 +75,7 @@ class HttpCookies(private val storage: CookiesStorage) {
     }
 }
 
+/**
+ * Gets all the cookies for the specified [host] for this [HttpClient].
+ */
 fun HttpClient.cookies(host: String): Map<String, Cookie> = feature(HttpCookies)?.get(host) ?: mapOf()
