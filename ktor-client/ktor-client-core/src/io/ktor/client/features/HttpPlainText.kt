@@ -10,7 +10,8 @@ import java.nio.charset.*
 
 
 class HttpPlainText(private val defaultCharset: Charset) {
-    suspend fun read(response: HttpResponse): String = response.readText(charset = defaultCharset)
+
+    internal suspend fun read(response: HttpResponse): String = response.readText(charset = defaultCharset)
 
     class Config {
         var defaultCharset: Charset = Charset.defaultCharset()

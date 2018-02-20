@@ -57,6 +57,11 @@ fun HttpRequestBuilder.takeFrom(builder: HttpRequestBuilder): HttpRequestBuilder
     return this
 }
 
+fun HttpRequestBuilder.takeFrom(request: HttpRequest): HttpRequestBuilder {
+    method = request.method
+
+    return this
+}
 fun HttpRequestBuilder.url(
         scheme: String = "http",
         host: String = "localhost",
